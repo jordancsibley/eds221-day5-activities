@@ -1,0 +1,42 @@
+---
+title: "Runoff Volumes"
+author: "Jordan"
+date: "2024-08-16"
+output: html_document
+---
+
+```{r}
+# load packages 
+library(tidyverse)
+library(here)
+```
+
+```{r}
+# source my runoff function 
+
+source(here::here("src", "storm_runoff.R"))
+```
+
+```{r}
+# using my function 
+ia_range <- seq(from = 0.6, to = 0.8, by = 0.01)
+
+vols <- predict_runoff(ia = ia_range, area = 182)
+
+# create data frame with the resulting info 
+runoff_volume <- data.frame(ia_range, vols)
+```
+
+```{r}
+# plotting this data 
+runoff_volume_plot <- ggplot(data = runoff_volume, aes(x = ia_range, y = vols))+
+  geom_point()+
+  geom_line()+
+  labs(x = "Impervious fraction",
+       y = "Storm runoff volume (ft^3)",
+       title = "Storm runoff volume estimations for 182 acre watershed")
+
+ggsave(here::here("figs", "runoff_volume_plot.png"))
+  
+```
+

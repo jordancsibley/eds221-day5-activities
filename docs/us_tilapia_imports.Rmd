@@ -1,0 +1,54 @@
+---
+title: "US Tilapia imports"
+author: "Jordan"
+date: "2024-08-16"
+output: html_document
+---
+
+```{r}
+# load packages 
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+```{r}
+# read in data 
+us_tilapia_imports <- read.csv(here::here("data", "us_tilapia_imports.csv"), na.strings = c("", "NA"))
+```
+
+```{r}
+# cleaning the data 
+imports_longer <- us_tilapia_imports %>%  pivot_longer(cols = -country,
+                                                      names_to = "year",
+                                                      values_to = "total_volume",
+                                                      names_prefix = "X")
+                                                           
+
+                                      
+```
+
+```{r}
+# checking out my cleaned data 
+# class(import_longer$year)
+
+# change volume to numeric by removing the ","
+
+imports_longer$total_volume <- str_replace_all(imports_longer$total_volume, ",", "")
+
+mutate(imports_longer$year <- as.numeric(imports_longer$year))
+mutate(imports_longer$total_volume <- as.numeric(imports_longer$total_volume))
+
+
+```
+
+
+```{r}
+# imports for us only 
+
+yearly_tilapia_tot <- imports_longer %>%   dplyr::group_by(year) %>% summarize(total_import = sum(total_volume, na.rm = TRUE))
+
+# remember to put na.rm = TRUE inside the action(), in this example sum()
+```
+
+# make a graph, but i wont today :(
