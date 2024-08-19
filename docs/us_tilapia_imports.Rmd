@@ -15,6 +15,7 @@ library(janitor)
 ```{r}
 # read in data 
 us_tilapia_imports <- read.csv(here::here("data", "us_tilapia_imports.csv"), na.strings = c("", "NA"))
+# included NAs to replace the cells with blank values 
 ```
 
 ```{r}
@@ -23,8 +24,10 @@ imports_longer <- us_tilapia_imports %>%  pivot_longer(cols = -country,
                                                       names_to = "year",
                                                       values_to = "total_volume",
                                                       names_prefix = "X")
-                                                           
 
+
+# turned the year columns into one column, took all the values under the old year columns into new column called total_volume
+# removed the X in front of the year by turning it into a prefix and therefor excluding it from the new df
                                       
 ```
 
@@ -36,17 +39,20 @@ imports_longer <- us_tilapia_imports %>%  pivot_longer(cols = -country,
 
 imports_longer$total_volume <- str_replace_all(imports_longer$total_volume, ",", "")
 
-mutate(imports_longer$year <- as.numeric(imports_longer$year))
 mutate(imports_longer$total_volume <- as.numeric(imports_longer$total_volume))
 
+# changing year to numeric 
 
+mutate(imports_longer$year <- as.numeric(imports_longer$year))
 ```
 
 
 ```{r}
-# imports for us only 
+#total imports for us per year
 
-yearly_tilapia_tot <- imports_longer %>%   dplyr::group_by(year) %>% summarize(total_import = sum(total_volume, na.rm = TRUE))
+yearly_tilapia_tot <- imports_longer %>% 
+  dplyr::group_by(year) %>% 
+  summarize(total_import = sum(total_volume, na.rm = TRUE))
 
 # remember to put na.rm = TRUE inside the action(), in this example sum()
 ```
